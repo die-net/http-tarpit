@@ -14,9 +14,9 @@ type TarpitConn struct {
 	contentLength int
 }
 
-var period = flag.Duration("period", 16*time.Second, "The approximate time between each byte sent.")
-var timeslice = flag.Duration("timeslice", 50*time.Millisecond, "How often to send something.")
-var responseLen = flag.Int("responseLen", 10485760, "The number of bytes to send in each response.")
+var period = flag.Duration("period", 16*time.Second, "Time between each byte sent on a connection.")
+var timeslice = flag.Duration("timeslice", 50*time.Millisecond, "How often each thread should wake up to send.")
+var responseLen = flag.Int("response_len", 10485760, "The number of bytes to send total per connection.")
 
 var toTimer = make(chan *TarpitConn, 10000)
 
