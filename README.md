@@ -35,8 +35,10 @@ Install [Go](http://golang.org/doc/install) and git, then:
 	cd http-tarpit
 	go build
 
-Usage:
------
+And you'll end up with an "http-tarpit" binary in the current directory.
+
+Command-line flags:
+------------------
 
 	-listen=":8080": The [IP]:port to listen for incoming connections on.
 	-max_connections=4096: The maximum number of incoming connections allowed.
