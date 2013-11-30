@@ -1,8 +1,10 @@
 package main
 
-import "flag"
-import "log"
-import "syscall"
+import (
+	"flag"
+	"log"
+	"syscall"
+)
 
 var maxConnections = flag.Int("max_connections", getRlimitMax(syscall.RLIMIT_NOFILE), "The maximum number of incoming connections allowed.")
 

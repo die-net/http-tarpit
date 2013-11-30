@@ -1,9 +1,11 @@
 package main
 
-import "flag"
-import "log"
-import "net/http"
-import "runtime"
+import (
+	"flag"
+	"log"
+	"net/http"
+	"runtime"
+)
 
 var listenAddr = flag.String("listen", ":8080", "The [IP]:port to listen for incoming connections on.")
 var workers = flag.Int("workers", runtime.NumCPU(), "The number of worker threads to execute.")

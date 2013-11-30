@@ -1,17 +1,10 @@
 package main
 
-import "bufio"
-import "net"
-import "net/http"
-import "math/rand"
-
-func number(rng *rand.Rand, low int, high int) int {
-	high -= low
-	if high < 0 {
-		high = 0
-	}
-	return low + rng.Int()%(high+1)
-}
+import (
+	"bufio"
+	"net"
+	"net/http"
+)
 
 func robotsDisallowHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")

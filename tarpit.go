@@ -1,12 +1,15 @@
 package main
 
-import "container/list"
-import "flag"
-import "net"
-import "net/http"
-import "math/rand"
-import "strconv"
-import "time"
+import (
+	"container/list"
+	"flag"
+	"log"
+	"math/rand"
+	"net"
+	"net/http"
+	"strconv"
+	"time"
+)
 
 type TarpitConn struct {
 	conn          net.Conn
@@ -47,7 +50,7 @@ func tarpitTimer() {
 	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	// At startup, randomize within timeslice to try to avoid thundering herd.
-	time.Sleep(time.Duration(number(rng, 0, int(*timeslice))))
+	time.Sleep(time.Duration(rng.Int63n(int64(*timeslice))))
 
 	tick := time.NewTicker(*timeslice)
 
@@ -56,12 +59,12 @@ func tarpitTimer() {
 	for {
 		select {
 		case tc := <-toTimer:
-			timeslices[number(rng, 0, len(timeslices)-1)].PushBack(tc)
+			timeslices[rng.Int31n(int32(len(timeslices)))].PushBack(tc)
 
 		case <-tick.C:
 			// Pick a printable ascii character to send.
 			b := make([]byte, 1)
-			b[0] = byte(number(rng, 32, 126))
+			b[0] = byte(rng.Int31n(95) + 32)
 
 			tarpitWrite(timeslices[nextslice], b)
 
