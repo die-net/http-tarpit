@@ -3,7 +3,6 @@ package main
 import (
 	"container/list"
 	"flag"
-	"log"
 	"math/rand"
 	"net"
 	"net/http"
