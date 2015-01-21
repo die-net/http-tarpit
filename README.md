@@ -61,3 +61,12 @@ even when idle.  If -timeslice isn't an even multiple of -period, you will
 get a slightly inaccurate -period.
 
 The workers count defaults to the number of CPUs you have in /proc/cpuinfo.
+
+Deploying to Heroku:
+-------------------
+
+To deploy a tarpit server to [Heroku](http://heroku.com), start with this [guide](http://mmcgrana.github.io/2012/09/getting-started-with-go-on-heroku.html).
+Assuming you have the Heroku command line tools installed, you can start with:
+
+	heroku create -b https://github.com/kr/heroku-buildpack-go.git
+	git push heroku master
