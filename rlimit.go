@@ -15,9 +15,9 @@ func getRlimitMax(resource int) int {
 
 	if err == nil {
 		return int(rlimit.Max)
-	} else {
-		return 0
 	}
+
+	return 0
 }
 
 func setRlimit(resource int, value int) {
