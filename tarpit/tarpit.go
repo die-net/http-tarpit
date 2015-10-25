@@ -64,6 +64,10 @@ func (t *tarpit) Handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (t *tarpit) Close() {
+	close(t.toTimer)
+}
+
 func (t *tarpit) timer() {
 	numTimeslices := (int(t.period) + int(t.timeslice) - 1) / int(t.timeslice)
 	timeslices := make([]*list.List, numTimeslices)
@@ -80,7 +84,10 @@ func (t *tarpit) timer() {
 
 	for {
 		select {
-		case tc := <-t.toTimer:
+		case tc, ok := <-t.toTimer:
+			if !ok {
+				break
+			}
 			timeslices[t.rng.Intn(len(timeslices))].PushBack(tc)
 
 		case <-tick.C:
@@ -88,7 +95,7 @@ func (t *tarpit) timer() {
 			b := make([]byte, 1)
 			b[0] = byte(t.rng.Int31n(95) + 32)
 
-			t.write(timeslices[nextslice], b)
+			writeConns(timeslices[nextslice], b)
 
 			nextslice++
 			if nextslice >= len(timeslices) {
@@ -96,11 +103,17 @@ func (t *tarpit) timer() {
 			}
 		}
 	}
+
+	tick.Stop()
+
+	for slice := 0; slice < len(timeslices); slice++ {
+		closeConns(timeslices[slice])
+	}
 }
 
 // Write a byte array to all conns in a timeslice.
 
-func (t *tarpit) write(conns *list.List, b []byte) {
+func writeConns(conns *list.List, b []byte) {
 	var en *list.Element
 	for e := conns.Front(); e != nil; e = en {
 		en = e.Next()
@@ -115,5 +128,18 @@ func (t *tarpit) write(conns *list.List, b []byte) {
 			conns.Remove(e)
 			tc.conn.Close()
 		}
+	}
+}
+
+// Close all conns in a timeslice.
+
+func closeConns(conns *list.List) {
+	var en *list.Element
+	for e := conns.Front(); e != nil; e = en {
+		en = e.Next()
+
+		tc, _ := e.Value.(*tarpitConn)
+		conns.Remove(e)
+		tc.conn.Close()
 	}
 }
