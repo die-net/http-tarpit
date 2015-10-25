@@ -2,13 +2,20 @@ package main
 
 import (
 	"flag"
+	"github.com/die-net/http-tarpit/tarpit"
 	"log"
 	"net/http"
 	"runtime"
+	"time"
 )
 
 var listenAddr = flag.String("listen", ":8080", "The [IP]:port to listen for incoming connections on.")
 var workers = flag.Int("workers", runtime.NumCPU(), "The number of worker threads to execute.")
+var period = flag.Duration("period", 16*time.Second, "Time between each byte sent on a connection.")
+var timeslice = flag.Duration("timeslice", 50*time.Millisecond, "How often each thread should wake up to send.")
+var contentType = flag.String("content_type", "text/html", "The content-type to send with the response.")
+var minResponseLen = flag.Int64("min_response_len", 1048576, "The minimum number of bytes to send total per connection.")
+var maxResponseLen = flag.Int64("max_response_len", 10485760, "The maximum number of bytes to send total per connection.")
 
 func main() {
 	flag.Parse()
@@ -16,11 +23,10 @@ func main() {
 	setRlimitFromFlags()
 
 	runtime.GOMAXPROCS(*workers)
-	for i := *workers - 1; i >= 0; i-- {
-		go tarpitTimer()
-	}
 
-	http.HandleFunc("/", tarpitHandler)
+	tarpit := tarpit.NewTarpit(*workers, *contentType, *period, *timeslice, *minResponseLen, *maxResponseLen)
+
+	http.HandleFunc("/", tarpit.Handler)
 	http.HandleFunc("/robots.txt", robotsDisallowHandler)
 	log.Fatal(http.ListenAndServe(*listenAddr, nil))
 }

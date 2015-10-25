@@ -1,4 +1,4 @@
-package main
+package tarpit
 
 import (
 	"bufio"
@@ -6,12 +6,7 @@ import (
 	"net/http"
 )
 
-func robotsDisallowHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/plain")
-	w.Write([]byte("User-agent: *\nDisallow: /\n"))
-}
-
-func doHijack(w http.ResponseWriter) (net.Conn, *bufio.ReadWriter, bool) {
+func hijack(w http.ResponseWriter) (net.Conn, *bufio.ReadWriter, bool) {
 	if f, ok := w.(http.Flusher); ok {
 		f.Flush()
 	}
