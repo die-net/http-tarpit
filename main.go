@@ -24,7 +24,7 @@ func main() {
 
 	runtime.GOMAXPROCS(*workers)
 
-	tarpit := tarpit.NewTarpit(*workers, *contentType, *period, *timeslice, *minResponseLen, *maxResponseLen)
+	tarpit := tarpit.New(*workers, *contentType, *period, *timeslice, *minResponseLen, *maxResponseLen)
 
 	http.HandleFunc("/", tarpit.Handler)
 	http.HandleFunc("/robots.txt", robotsDisallowHandler)

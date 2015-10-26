@@ -24,7 +24,7 @@ type tarpitConn struct {
 	remaining int64
 }
 
-func NewTarpit(workers int, contentType string, period, timeslice time.Duration, minResponseLen, maxResponseLen int64) *tarpit {
+func New(workers int, contentType string, period, timeslice time.Duration, minResponseLen, maxResponseLen int64) *tarpit {
 	if workers <= 0 || contentType == "" || period.Nanoseconds() <= 0 || timeslice.Nanoseconds() <= 0 || minResponseLen <= 0 || maxResponseLen < minResponseLen {
 		return nil
 	}
