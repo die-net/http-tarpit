@@ -82,11 +82,12 @@ func (t *tarpit) timer() {
 
 	nextslice := 0
 
+outer:
 	for {
 		select {
 		case tc, ok := <-t.toTimer:
 			if !ok {
-				break
+				break outer
 			}
 			timeslices[t.rng.Intn(len(timeslices))].PushBack(tc)
 
