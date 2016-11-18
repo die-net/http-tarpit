@@ -1,4 +1,4 @@
-http-tarpit
+http-tarpit [![Build Status](https://travis-ci.org/die-net/http-tarpit.svg?branch=master)](https://travis-ci.org/die-net/http-tarpit)
 ===========
 
 Golang-based HTTP [Tarpit][]
