@@ -11,7 +11,7 @@ import (
 
 type tarpit struct {
 	contentType    string
-	period         time.Duration
+	numTimeslices  int
 	timeslice      time.Duration
 	minResponseLen int64
 	maxResponseLen int64
@@ -25,13 +25,13 @@ type tarpitConn struct {
 }
 
 func New(workers int, contentType string, period, timeslice time.Duration, minResponseLen, maxResponseLen int64) *tarpit {
-	if workers <= 0 || contentType == "" || period.Nanoseconds() <= 0 || timeslice.Nanoseconds() <= 0 || minResponseLen <= 0 || maxResponseLen < minResponseLen {
+	if workers <= 0 || contentType == "" || timeslice.Nanoseconds() <= 0 || period.Nanoseconds() < timeslice.Nanoseconds() || minResponseLen <= 0 || maxResponseLen < minResponseLen {
 		return nil
 	}
 
 	t := &tarpit{
 		contentType:    contentType,
-		period:         period,
+	        numTimeslices:  (int(period) + int(timeslice) - 1) / int(timeslice),
 		timeslice:      timeslice,
 		minResponseLen: minResponseLen,
 		maxResponseLen: maxResponseLen,
@@ -47,7 +47,7 @@ func New(workers int, contentType string, period, timeslice time.Duration, minRe
 }
 
 func (t *tarpit) Handler(w http.ResponseWriter, r *http.Request) {
-	responseLen := t.rng.Int63n(t.maxResponseLen-t.minResponseLen) + t.minResponseLen
+	responseLen := t.rng.Int63n(t.maxResponseLen-t.minResponseLen+1) + t.minResponseLen
 
 	// Headers must reflect that we don't do chunked encoding.
 	w.Header().Set("Content-Type", t.contentType)
@@ -69,8 +69,7 @@ func (t *tarpit) Close() {
 }
 
 func (t *tarpit) timer() {
-	numTimeslices := (int(t.period) + int(t.timeslice) - 1) / int(t.timeslice)
-	timeslices := make([]*list.List, numTimeslices)
+	timeslices := make([]*list.List, t.numTimeslices)
 	for i := range timeslices {
 		timeslices[i] = list.New()
 	}
