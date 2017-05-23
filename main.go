@@ -28,6 +28,9 @@ func main() {
 	runtime.GOMAXPROCS(*workers)
 
 	tarpit := tarpit.New(*workers, *contentType, *period, *timeslice, *minResponseLen, *maxResponseLen)
+	if tarpit == nil {
+		log.Fatal("Invalid argument")
+	}
 
 	http.HandleFunc("/", tarpit.Handler)
 	http.HandleFunc("/robots.txt", robotsDisallowHandler)
