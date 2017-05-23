@@ -31,7 +31,7 @@ func New(workers int, contentType string, period, timeslice time.Duration, minRe
 
 	t := &tarpit{
 		contentType:    contentType,
-	        numTimeslices:  (int(period) + int(timeslice) - 1) / int(timeslice),
+		numTimeslices:  (int(period) + int(timeslice) - 1) / int(timeslice),
 		timeslice:      timeslice,
 		minResponseLen: minResponseLen,
 		maxResponseLen: maxResponseLen,
