@@ -2,18 +2,10 @@ language: go
 
 matrix:
   include:
-  - go: 1.4.3
-    env: GOVET=false
-  - go: 1.5.4
-    env: GOVET=true
-  - go: 1.6.4
-    env: GOVET=true
-  - go: 1.7.6
-    env: GOVET=true
-  - go: 1.8.5
-    env: GOVET=true
-  - go: 1.9.2
-    env: GOVET=true
+  - go: 1.8.7
+  - go: 1.9.7
+  - go: 1.10.4
+  - go: 1.11
 
 install:
   - # Do nothing.
@@ -21,4 +13,4 @@ install:
 script:
   - go get -t -v ./...
   - diff -u <(echo -n) <(gofmt -d -s .)
-  - if [ "$GOVET" = "true" ]; then go vet ./...; fi
+  - go vet ./...
