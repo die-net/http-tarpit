@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-type tarpit struct {
+type Tarpit struct {
 	contentType    string
 	numTimeslices  int
 	timeslice      time.Duration
@@ -24,12 +24,12 @@ type tarpitConn struct {
 	remaining int64
 }
 
-func New(workers int, contentType string, period, timeslice time.Duration, minResponseLen, maxResponseLen int64) *tarpit {
+func New(workers int, contentType string, period, timeslice time.Duration, minResponseLen, maxResponseLen int64) *Tarpit {
 	if workers <= 0 || contentType == "" || timeslice.Nanoseconds() <= 0 || period.Nanoseconds() < timeslice.Nanoseconds() || minResponseLen <= 0 || maxResponseLen < minResponseLen {
 		return nil
 	}
 
-	t := &tarpit{
+	t := &Tarpit{
 		contentType:    contentType,
 		numTimeslices:  (int(period) + int(timeslice) - 1) / int(timeslice),
 		timeslice:      timeslice,
@@ -46,7 +46,7 @@ func New(workers int, contentType string, period, timeslice time.Duration, minRe
 	return t
 }
 
-func (t *tarpit) Handler(w http.ResponseWriter, r *http.Request) {
+func (t *Tarpit) Handler(w http.ResponseWriter, r *http.Request) {
 	responseLen := t.rng.Int63n(t.maxResponseLen-t.minResponseLen+1) + t.minResponseLen
 
 	// Headers must reflect that we don't do chunked encoding.
@@ -64,11 +64,11 @@ func (t *tarpit) Handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (t *tarpit) Close() {
+func (t *Tarpit) Close() {
 	close(t.toTimer)
 }
 
-func (t *tarpit) timer() {
+func (t *Tarpit) timer() {
 	timeslices := make([]*list.List, t.numTimeslices)
 	for i := range timeslices {
 		timeslices[i] = list.New()
@@ -121,12 +121,12 @@ func writeConns(conns *list.List, b []byte) {
 		tc, _ := e.Value.(*tarpitConn)
 
 		// This theoretically could block.
-		len, err := tc.conn.Write(b)
+		n, err := tc.conn.Write(b)
 
 		tc.remaining--
-		if tc.remaining <= 0 || len == 0 || err != nil {
+		if tc.remaining <= 0 || n == 0 || err != nil {
 			conns.Remove(e)
-			tc.conn.Close()
+			_ = tc.conn.Close()
 		}
 	}
 }
@@ -140,6 +140,6 @@ func closeConns(conns *list.List) {
 
 		tc, _ := e.Value.(*tarpitConn)
 		conns.Remove(e)
-		tc.conn.Close()
+		_ = tc.conn.Close()
 	}
 }

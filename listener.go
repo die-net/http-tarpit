@@ -24,13 +24,13 @@ func (l *BufSizeListener) Accept() (net.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	tc.SetKeepAlive(true)
-	tc.SetKeepAlivePeriod(3 * time.Minute)
+	_ = tc.SetKeepAlive(true)
+	_ = tc.SetKeepAlivePeriod(3 * time.Minute)
 	if l.ReadBufferSize > 0 {
-		tc.SetReadBuffer(l.ReadBufferSize)
+		_ = tc.SetReadBuffer(l.ReadBufferSize)
 	}
 	if l.WriteBufferSize > 0 {
-		tc.SetWriteBuffer(l.WriteBufferSize)
+		_ = tc.SetWriteBuffer(l.WriteBufferSize)
 	}
 
 	return tc, nil

@@ -6,5 +6,5 @@ import (
 
 func robotsDisallowHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
-	w.Write([]byte("User-agent: *\nDisallow: /\n"))
+	_, _ = w.Write([]byte("User-agent: *\nDisallow: /\n"))
 }
