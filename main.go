@@ -2,12 +2,13 @@ package main
 
 import (
 	"flag"
-	"github.com/die-net/http-tarpit/tarpit"
 	"log"
 	"net"
 	"net/http"
 	"runtime"
 	"time"
+
+	"github.com/die-net/http-tarpit/tarpit"
 )
 
 var listenAddr = flag.String("listen", ":8080", "The [IP]:port to listen for incoming connections on.")
@@ -27,12 +28,12 @@ func main() {
 
 	runtime.GOMAXPROCS(*workers)
 
-	tarpit := tarpit.New(*workers, *contentType, *period, *timeslice, *minResponseLen, *maxResponseLen)
-	if tarpit == nil {
+	tp := tarpit.New(*workers, *contentType, *period, *timeslice, *minResponseLen, *maxResponseLen)
+	if tp == nil {
 		log.Fatal("Invalid argument")
 	}
 
-	http.HandleFunc("/", tarpit.Handler)
+	http.HandleFunc("/", tp.Handler)
 	http.HandleFunc("/robots.txt", robotsDisallowHandler)
 
 	log.Fatal(listenAndServe(*listenAddr))
