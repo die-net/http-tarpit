@@ -1,3 +1,4 @@
+dist: xenial
 language: go
 
 matrix:
@@ -14,4 +15,4 @@ install:
 script:
   - go get -t -v ./...
   - diff -u <(echo -n) <(gofmt -d -s .)
-  - go vet ./...
+  - go test ./...
