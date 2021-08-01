@@ -1,3 +1,3 @@
 module github.com/die-net/http-tarpit
 
-go 1.12
+go 1.16
