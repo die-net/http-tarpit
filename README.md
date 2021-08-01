@@ -1,5 +1,4 @@
-http-tarpit [![Build Status](https://travis-ci.org/die-net/http-tarpit.svg?branch=master)](https://travis-ci.org/die-net/http-tarpit)
-===========
+# http-tarpit [![Build Status](https://github.com/die-net/http-tarpit/actions/workflows/go-test.yml/badge.svg)](https://github.com/die-net/http-tarpit/actions/workflows/go-test.yml) [![Go Report Card](https://goreportcard.com/badge/github.com/die-net/http-tarpit)](https://goreportcard.com/report/github.com/die-net/http-tarpit)
 
 Golang-based HTTP [Tarpit][]
 [Tarpit]: http://en.wikipedia.org/wiki/Tarpit_(networking)
